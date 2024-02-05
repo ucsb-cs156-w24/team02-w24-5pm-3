@@ -303,7 +303,7 @@ public class HelpRequestControllerTests extends ControllerTestCase {
 
                 // assert
                 verify(helpRequestRepository, times(1)).findById(67L);
-                verify(helpRequestRepository, times(1)).save(helpRequestEdited); // should be saved with correct user
+                verify(helpRequestRepository, times(1)).save(helpRequestEdited); // saved with correct user
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(requestBody, responseString);
         }
