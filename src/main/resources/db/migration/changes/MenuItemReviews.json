@@ -1,0 +1,74 @@
+{
+    "databaseChangeLog": [
+        {
+            "changeSet": {
+                "id": "MenuItemReviews-1",
+                "author": "SophiaT",
+                "preConditions": [
+                    {
+                        "onFail": "MARK_RAN"
+                    },
+                    {
+                        "not": [
+                            {
+                                "tableExists": {
+                                    "tableName": "MENUITEMREVIEWS"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "changes": [
+                    {
+                        "createTable": {
+                            "columns": [
+                                {
+                                    "column": {
+                                        "autoIncrement": true,
+                                        "constraints": {
+                                            "primaryKey": true,
+                                            "primaryKeyName": "CONSTRAINT_5"
+                                          },
+                                          "name": "ID",
+                                          "type": "BIGINT"
+                                    }
+                                },
+                                {
+                                    "column": {
+                                        "name": "ITEMID",
+                                        "type": "BIGINT"
+                                    }
+                                },
+                                {
+                                    "column": {
+                                        "name": "REVIEWER_EMAIL",
+                                        "type": "VARCHAR(255)"
+                                    }
+                                },
+                                {
+                                    "column": {
+                                        "name": "STARS",
+                                        "type": "INT"
+                                    }
+                                },
+                                {
+                                    "column": {
+                                        "name": "DATE_REVIEWED",
+                                        "type": "TIMESTAMP"
+                                    }
+                                },
+                                {
+                                    "column": {
+                                        "name": "COMMENTS",
+                                        "type": "VARCHAR(255)"
+                                    }
+                                }
+                            ],
+                            "tableName": "MENUITEMREVIEWS"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
