@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.Articles;
-import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.ArticlesRepository;
 
@@ -73,4 +72,16 @@ public class ArticlesController extends ApiController{
         return savedArticles;
     }
     
+    @Operation(summary= "Delete an Article")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteArticles(
+            @Parameter(name="id") @RequestParam Long id) {
+        Articles article = articlesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Articles.class, id));
+
+        articlesRepository.delete(article);
+        return genericMessage("Article with id %s deleted".formatted(id));
+    }
+
 }
