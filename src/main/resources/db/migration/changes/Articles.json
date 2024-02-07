@@ -3,7 +3,7 @@
       {
         "changeSet": {
           "id": "Articles-1",
-          "author": "ANIMESH_S",
+          "author": "AnimeshS",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
