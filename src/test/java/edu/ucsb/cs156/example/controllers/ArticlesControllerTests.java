@@ -144,7 +144,7 @@ public class ArticlesControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
-        // Tests for DELETE /api/ucsbdates?id=... 
+        // Tests for DELETE /api/articles?id=... 
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
@@ -179,7 +179,7 @@ public class ArticlesControllerTests extends ControllerTestCase {
         
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_tries_to_delete_non_existant_ucsbdate_and_gets_right_error_message()
+        public void admin_tries_to_delete_non_existant_article_and_gets_right_error_message()
                         throws Exception {
                 // arrange
 
@@ -195,6 +195,88 @@ public class ArticlesControllerTests extends ControllerTestCase {
                 verify(articlesRepository, times(1)).findById(15L);
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("Articles with id 15 not found", json.get("message"));
+        }
+
+        // Tests for PUT /api/articles?id=... 
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_can_edit_an_existing_article() throws Exception {
+                // arrange
+
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+
+                Articles articleOrig = Articles.builder()
+                                .title("TestArticle1")
+                                .url("TestArticle1.com")
+                                .explanation("Test1")
+                                .email("TestArticle1@gmail.com")
+                                .dateAdded(ldt1)
+                                .build();
+
+                Articles articleEdited = Articles.builder()
+                                .title("TestArticle2")
+                                .url("TestArticle2.com")
+                                .explanation("Test2")
+                                .email("TestArticle2@gmail.com")
+                                .dateAdded(ldt2)
+                                .build();
+
+                String requestBody = mapper.writeValueAsString(articleEdited);
+
+                when(articlesRepository.findById(eq(67L))).thenReturn(Optional.of(articleOrig));
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/articles?id=67")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(articlesRepository, times(1)).findById(67L);
+                verify(articlesRepository, times(1)).save(articleEdited); // should be saved with correct user
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(requestBody, responseString);
+        }
+
+        
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_cannot_edit_article_that_does_not_exist() throws Exception {
+                // arrange
+
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                Articles article = Articles.builder()
+                                .title("TestArticle1")
+                                .url("TestArticle1.com")
+                                .explanation("Test1")
+                                .email("TestArticle1@gmail.com")
+                                .dateAdded(ldt1)
+                                .build();
+
+                String requestBody = mapper.writeValueAsString(article);
+
+                when(articlesRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/articles?id=67")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+                verify(articlesRepository, times(1)).findById(67L);
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("Articles with id 67 not found", json.get("message"));
+
         }
 
 }
