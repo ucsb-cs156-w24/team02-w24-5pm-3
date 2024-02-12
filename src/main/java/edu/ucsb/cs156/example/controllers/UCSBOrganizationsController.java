@@ -69,16 +69,6 @@ public class UCSBOrganizationsController extends ApiController {
 
         return organization;
     }
-
-    @Operation(summary= "Delete a UCSBOrganizations")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("")
-    public Object deleteOrganizations(
-            @Parameter(name="orgCode") @RequestParam String orgCode) {
-        UCSBOrganizations commons = ucsbOrganizationsRepository.findById(orgCode)
-                .orElseThrow(() -> new EntityNotFoundException(UCSBOrganizations.class, orgCode));
-
-        ucsbOrganizationsRepository.delete(commons);
-        return genericMessage("UCSBOrganizations with id %s deleted".formatted(orgCode));
-    }
 }
+
+//new stuff. I am not sure if I should have deleted all of it lol 
