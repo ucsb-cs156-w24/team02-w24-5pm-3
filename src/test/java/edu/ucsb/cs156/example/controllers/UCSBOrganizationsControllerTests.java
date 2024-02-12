@@ -40,6 +40,7 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
         @MockBean
         UserRepository userRepository;
 
+
         @Test
         public void logged_out_users_cannot_get_all() throws Exception {
                 mockMvc.perform(get("/api/ucsborganizations/all"))
@@ -114,7 +115,7 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
         @Test
         public void logged_in_regular_users_cannot_post() throws Exception {
                 mockMvc.perform(post("/api/ucsborganizations/post"))
-                                .andExpect(status().is(403)); 
+                                .andExpect(status().is(403)); // only admins can post
         }
 
         @WithMockUser(roles = { "ADMIN", "USER" })
@@ -145,7 +146,7 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
                 @Test
                 public void logged_out_users_cannot_get_by_id() throws Exception {
                         mockMvc.perform(get("/api/ucsborganizations?orgCode=ZC"))
-                                        .andExpect(status().is(403)); // logged out users can't get by id
+                                        .andExpect(status().is(403)); 
                 }
 
                 @WithMockUser(roles = { "USER" })
@@ -165,11 +166,54 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
                         MvcResult response = mockMvc.perform(get("/api/ucsborganizations?orgCode=LC"))
                                         .andExpect(status().isOk()).andReturn();
 
-                        
 
                         verify(ucsbOrganizationsRepository, times(1)).findById(eq("LC"));
                         String expectedJson = mapper.writeValueAsString(lacrosse);
                         String responseString = response.getResponse().getContentAsString();
                         assertEquals(expectedJson, responseString);
                 }
+
+
+                @WithMockUser(roles = { "ADMIN", "USER" })
+                @Test
+                public void admin_can_delete_a_date() throws Exception {
+
+                        UCSBOrganizations volleyball = UCSBOrganizations.builder()
+                                .orgCode("VC")
+                                .orgTranslationShort("VOLLEYBALL")
+                                .orgTranslation("VOLLEYBALL CLUB AT UCSB")
+                                .inactive(true)
+                                .build();
+
+                        when(ucsbOrganizationsRepository.findById(eq("VC"))).thenReturn(Optional.of(volleyball));
+
+                        MvcResult response = mockMvc.perform(
+                                        delete("/api/ucsborganizations?orgCode=VC")
+                                                        .with(csrf()))
+                                        .andExpect(status().isOk()).andReturn();
+
+                        verify(ucsbOrganizationsRepository, times(1)).findById("VC");
+                        verify(ucsbOrganizationsRepository, times(1)).delete(any());
+
+                        Map<String, Object> json = responseToJson(response);
+                        assertEquals("UCSBOrganizations with id VC deleted", json.get("message"));
+                }
+
+                @WithMockUser(roles = { "ADMIN", "USER" })
+                @Test
+                public void admin_tries_to_delete_non_existant_commons_and_gets_right_error_message()
+                                throws Exception {
+
+                        when(ucsbOrganizationsRepository.findById(eq("CSA"))).thenReturn(Optional.empty());
+
+                        MvcResult response = mockMvc.perform(
+                                        delete("/api/ucsborganizations?orgCode=CSA")
+                                                        .with(csrf()))
+                                        .andExpect(status().isNotFound()).andReturn();
+
+                        verify(ucsbOrganizationsRepository, times(1)).findById("CSA");
+                        Map<String, Object> json = responseToJson(response);
+                        assertEquals("UCSBOrganizations with id CSA not found", json.get("message"));
+                }
+
 }
