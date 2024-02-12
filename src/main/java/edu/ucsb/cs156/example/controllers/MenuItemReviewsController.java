@@ -80,7 +80,7 @@ public class MenuItemReviewsController extends ApiController {
     @Operation(summary= "Delete a review")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
-    public Object deleteUCSBDate(
+    public Object deleteMenuItemReview(
             @Parameter(name="id") @RequestParam long id) {
         MenuItemReview menuItemReview = menuItemReviewRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(MenuItemReview.class, id));
