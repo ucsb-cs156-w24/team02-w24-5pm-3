@@ -1,7 +1,6 @@
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.HelpRequest;
-import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 
@@ -81,5 +80,17 @@ public class HelpRequestController extends ApiController {
                 .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
 
         return helpRequest;
+    }
+
+    @Operation(summary= "Delete a HelpRequest")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteHelpRequest(
+            @Parameter(name="id") @RequestParam Long id) {
+        HelpRequest helpRequest = helpRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
+
+        helpRequestRepository.delete(helpRequest);
+        return genericMessage("HelpRequest with id %s deleted".formatted(id));
     }
 }
