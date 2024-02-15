@@ -3,7 +3,7 @@
       {
         "changeSet": {
           "id": "UCSBOrganizations-4",
-          "author": "Michael",
+          "author": "YourName",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
