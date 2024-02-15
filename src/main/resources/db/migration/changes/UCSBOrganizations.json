@@ -2,8 +2,8 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "UCSBOrganizations-1",
-          "author": "YourName",
+          "id": "UCSBOrganizations-4",
+          "author": "Michael",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
@@ -29,19 +29,19 @@
                         "primaryKey": true,
                         "primaryKeyName": "CONSTRAINT_1"
                       },
-                      "name": "ORGCODE",
+                      "name": "ORG_CODE",
                       "type": "VARCHAR(255)"
                     }
                   },
                   {
                     "column": {
-                      "name": "ORGTRANSLATIONSHORT",
+                      "name": "ORG_TRANSLATION_SHORT",
                       "type": "VARCHAR(255)"
                     }
                   },
                   {
                     "column": {
-                      "name": "ORGTRANSLATION",
+                      "name": "ORG_TRANSLATION",
                       "type": "VARCHAR(255)"
                     }
                   },
