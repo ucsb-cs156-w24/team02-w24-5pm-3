@@ -251,5 +251,87 @@ public class MenuItemReviewsControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("MenuItemReview with id 15 not found", json.get("message"));
         }
+
+        // Tests for PUT /api/menuitemreviews?id=... 
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_can_edit_an_existing_review() throws Exception {
+                // arrange
+
+                LocalDateTime date1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                LocalDateTime date2 = LocalDateTime.parse("2023-01-03T00:00:00");
+
+                MenuItemReview menuItemReviewOrig = MenuItemReview.builder()
+                            .itemId(42)
+                            .reviewerEmail("sophiattran@ucsb.edu")
+                            .stars(2)
+                            .dateReviewed(date1)
+                            .comments("this sucked")
+                            .build();
+
+                MenuItemReview menuItemReviewEdited = MenuItemReview.builder()
+                            .itemId(11)
+                            .reviewerEmail("sophia@ucsb.edu")
+                            .stars(3)
+                            .dateReviewed(date2)
+                            .comments("mid")
+                            .build();
+
+                String requestBody = mapper.writeValueAsString(menuItemReviewEdited);
+
+                when(menuItemReviewRepository.findById(eq(67L))).thenReturn(Optional.of(menuItemReviewOrig));
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/menuitemreviews?id=67")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(menuItemReviewRepository, times(1)).findById(67L);
+                verify(menuItemReviewRepository, times(1)).save(menuItemReviewEdited); // should be saved with correct user
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(requestBody, responseString);
+        }
+
+        
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_cannot_edit_review_that_does_not_exist() throws Exception {
+                // arrange
+
+                LocalDateTime date1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                MenuItemReview editedReview = MenuItemReview.builder()
+                            .itemId(42)
+                            .reviewerEmail("sophiattran@ucsb.edu")
+                            .stars(2)
+                            .dateReviewed(date1)
+                            .comments("this sucked")
+                            .build();
+
+                String requestBody = mapper.writeValueAsString(editedReview);
+
+                when(menuItemReviewRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/menuitemreviews?id=67")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .characterEncoding("utf-8")
+                                                .content(requestBody)
+                                                .with(csrf()))
+                                .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+                verify(menuItemReviewRepository, times(1)).findById(67L);
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("MenuItemReview with id 67 not found", json.get("message"));
+
+        }
         
 }
