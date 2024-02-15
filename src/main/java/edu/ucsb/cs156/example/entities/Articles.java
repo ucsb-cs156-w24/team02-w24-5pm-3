@@ -1,5 +1,7 @@
 package edu.ucsb.cs156.example.entities;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,14 +16,15 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "ucsbdiningcommonsmenuitem")
-public class UCSBDiningCommonsMenuItem {
+@Entity(name = "articles")
+public class Articles {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-
-  private String diningCommonsCode;
-  private String name;
-  private String station;
+  private String title;
+  private String url;
+  private String explanation;
+  private String email;
+  private LocalDateTime dateAdded;
 }
