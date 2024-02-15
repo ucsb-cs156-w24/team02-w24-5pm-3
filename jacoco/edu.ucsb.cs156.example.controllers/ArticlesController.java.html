@@ -71,17 +71,28 @@ import java.time.LocalDateTime;
 
 <span class="fc" id="L72">        return savedArticles;</span>
     }
+
+    @Operation(summary= &quot;Get a single date&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+    @GetMapping(&quot;&quot;)
+    public Articles getById(
+            @Parameter(name=&quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L80">        Articles article = articlesRepository.findById(id)</span>
+<span class="fc" id="L81">                .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
+
+<span class="fc" id="L83">        return article;</span>
+    }
     
     @Operation(summary= &quot;Delete an Article&quot;)
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
     @DeleteMapping(&quot;&quot;)
     public Object deleteArticles(
             @Parameter(name=&quot;id&quot;) @RequestParam Long id) {
-<span class="fc" id="L80">        Articles article = articlesRepository.findById(id)</span>
-<span class="fc" id="L81">                .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
+<span class="fc" id="L91">        Articles article = articlesRepository.findById(id)</span>
+<span class="fc" id="L92">                .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
 
-<span class="fc" id="L83">        articlesRepository.delete(article);</span>
-<span class="fc" id="L84">        return genericMessage(&quot;Article with id %s deleted&quot;.formatted(id));</span>
+<span class="fc" id="L94">        articlesRepository.delete(article);</span>
+<span class="fc" id="L95">        return genericMessage(&quot;Article with id %s deleted&quot;.formatted(id));</span>
     }
 
     @Operation(summary= &quot;Update a single article&quot;)
@@ -91,18 +102,18 @@ import java.time.LocalDateTime;
             @Parameter(name=&quot;id&quot;) @RequestParam Long id,
             @RequestBody @Valid Articles incoming) {
 
-<span class="fc" id="L94">        Articles article = articlesRepository.findById(id)</span>
-<span class="fc" id="L95">                .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
+<span class="fc" id="L105">        Articles article = articlesRepository.findById(id)</span>
+<span class="fc" id="L106">                .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
 
-<span class="fc" id="L97">        article.setTitle(incoming.getTitle());</span>
-<span class="fc" id="L98">        article.setUrl(incoming.getUrl());</span>
-<span class="fc" id="L99">        article.setExplanation(incoming.getExplanation());</span>
-<span class="fc" id="L100">        article.setEmail(incoming.getEmail());</span>
-<span class="fc" id="L101">        article.setDateAdded(incoming.getDateAdded());</span>
+<span class="fc" id="L108">        article.setTitle(incoming.getTitle());</span>
+<span class="fc" id="L109">        article.setUrl(incoming.getUrl());</span>
+<span class="fc" id="L110">        article.setExplanation(incoming.getExplanation());</span>
+<span class="fc" id="L111">        article.setEmail(incoming.getEmail());</span>
+<span class="fc" id="L112">        article.setDateAdded(incoming.getDateAdded());</span>
 
-<span class="fc" id="L103">        articlesRepository.save(article);</span>
+<span class="fc" id="L114">        articlesRepository.save(article);</span>
 
-<span class="fc" id="L105">        return article;</span>
+<span class="fc" id="L116">        return article;</span>
     }
 
 }
