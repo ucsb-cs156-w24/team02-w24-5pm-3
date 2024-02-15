@@ -2,6 +2,7 @@ package edu.ucsb.cs156.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,17 +62,17 @@ public class RecommendationRequestController extends ApiController {
 
         return savedRecommendationRequest;
     }
-//
-//    @Operation(summary= "Get a single date")
-//    @PreAuthorize("hasRole('ROLE_USER')")
-//    @GetMapping("")
-//    public UCSBDate getById(
-//            @Parameter(name="id") @RequestParam Long id) {
-//        UCSBDate ucsbDate = ucsbDateRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException(UCSBDate.class, id));
-//
-//        return ucsbDate;
-//    }
+
+    @Operation(summary= "Get a recommendation request")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public RecommendationRequest getById(
+            @Parameter(name="id") @RequestParam Long id) {
+        RecommendationRequest recommendationRequest = recommendationRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+        return recommendationRequest;
+    }
 //
 //    @Operation(summary= "Delete a UCSBDate")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")

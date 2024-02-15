@@ -3,6 +3,8 @@ package edu.ucsb.cs156.example.controllers;
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 import edu.ucsb.cs156.example.repositories.UserRepository;
+import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.controllers.RecommendationRequestController;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,18 +38,18 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
         UserRepository userRepository;
 
         // Tests for GET /api/recommendationrequest/all
-        
+
         @Test
         public void logged_out_users_cannot_get_all() throws Exception {
                 mockMvc.perform(get("/api/recommendationrequest/all"))
-                                .andExpect(status().is(403)); // logged out users can't get all
+                        .andExpect(status().is(403)); // logged out users can't get all
         }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_users_can_get_all() throws Exception {
                 mockMvc.perform(get("/api/recommendationrequest/all"))
-                                .andExpect(status().is(200)); // logged
+                        .andExpect(status().is(200)); // logged
         }
 
         @WithMockUser(roles = { "USER" })
@@ -77,19 +79,19 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                         .done(true)
                         .build();
 
-                ArrayList<RecommendationRequest> expectedDates = new ArrayList<>();
+                ArrayList<RecommendationRequest> recommendationRequests = new ArrayList<>();
                 recommendationRequests.addAll(Arrays.asList(recommendationRequest1, recommendationRequest2));
 
                 when(recommendationRequestRepository.findAll()).thenReturn(recommendationRequests);
 
                 // act
                 MvcResult response = mockMvc.perform(get("/api/recommendationrequest/all"))
-                                .andExpect(status().isOk()).andReturn();
+                        .andExpect(status().isOk()).andReturn();
 
                 // assert
 
                 verify(recommendationRequestRepository, times(1)).findAll();
-                String expectedJson = mapper.writeValueAsString(expectedDates);
+                String expectedJson = mapper.writeValueAsString(recommendationRequests);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
@@ -99,14 +101,14 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
         @Test
         public void logged_out_users_cannot_post() throws Exception {
                 mockMvc.perform(post("/api/recommendationrequest/post"))
-                                .andExpect(status().is(403));
+                        .andExpect(status().is(403));
         }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_regular_users_cannot_post() throws Exception {
                 mockMvc.perform(post("/api/recommendationrequest/post"))
-                                .andExpect(status().is(403)); // only admins can post
+                        .andExpect(status().is(403)); // only admins can post
         }
 
         @WithMockUser(roles = { "ADMIN", "USER" })
@@ -131,8 +133,8 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                 // act
                 MvcResult response = mockMvc.perform(
                                 post("/api/recommendationrequest/post?professorEmail=profemail&requesterEmail=stuemail&explanation=string&dateRequested=2022-01-03T00:00:00&dateNeeded=2022-01-03T00:00:00&done=true")
-                                                .with(csrf()))
-                                .andExpect(status().isOk()).andReturn();
+                                        .with(csrf()))
+                        .andExpect(status().isOk()).andReturn();
 
                 // assert
                 verify(recommendationRequestRepository, times(1)).save(recommendationRequest1);
@@ -141,12 +143,12 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
-        // Tests for GET /api/recomendationrequest?id=...
+        // Tests for GET /api/recommendationrequest?id=...
 
         @Test
         public void logged_out_users_cannot_get_by_id() throws Exception {
                 mockMvc.perform(get("/api/recommendationrequest?id=7"))
-                                .andExpect(status().is(403)); // logged out users can't get by id
+                        .andExpect(status().is(403)); // logged out users can't get by id
         }
 
         @WithMockUser(roles = { "USER" })
@@ -156,12 +158,12 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                 // arrange
                 LocalDateTime ldt = LocalDateTime.parse("2022-01-03T00:00:00");
 
-                RecommendationRequest recommendationRequest1 = RecommendationRequest.builder()
+                RecommendationRequest recommendationRequest = RecommendationRequest.builder()
                         .professorEmail("email")
                         .requesterEmail("email")
                         .explanation("string")
-                        .dateRequested(ldt1)
-                        .dateNeeded(ldt1)
+                        .dateRequested(ldt)
+                        .dateNeeded(ldt)
                         .done(true)
                         .build();
 
@@ -169,7 +171,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc.perform(get("/api/recommendationrequest?id=7"))
-                                .andExpect(status().isOk()).andReturn();
+                        .andExpect(status().isOk()).andReturn();
 
                 // assert
 
@@ -189,7 +191,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc.perform(get("/api/recommendationrequest?id=7"))
-                                .andExpect(status().isNotFound()).andReturn();
+                        .andExpect(status().isNotFound()).andReturn();
 
                 // assert
 
