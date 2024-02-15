@@ -144,4 +144,57 @@ public class ArticlesControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
+        // Tests for DELETE /api/ucsbdates?id=... 
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_can_delete_an_article() throws Exception {
+                // arrange
+
+                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+                Articles article = Articles.builder()
+                                .title("TestArticle1")
+                                .url("TestArticle1.com")
+                                .explanation("Test1")
+                                .email("TestArticle1@gmail.com")
+                                .dateAdded(ldt1)
+                                .build();
+
+                when(articlesRepository.findById(eq(15L))).thenReturn(Optional.of(article));
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                delete("/api/articles?id=15")
+                                                .with(csrf()))
+                                .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(articlesRepository, times(1)).findById(15L);
+                verify(articlesRepository, times(1)).delete(any());
+
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("Article with id 15 deleted", json.get("message"));
+        }
+        
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_tries_to_delete_non_existant_ucsbdate_and_gets_right_error_message()
+                        throws Exception {
+                // arrange
+
+                when(articlesRepository.findById(eq(15L))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                delete("/api/articles?id=15")
+                                                .with(csrf()))
+                                .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+                verify(articlesRepository, times(1)).findById(15L);
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("Articles with id 15 not found", json.get("message"));
+        }
+
 }
