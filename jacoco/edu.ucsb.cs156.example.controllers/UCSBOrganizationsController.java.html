@@ -70,16 +70,22 @@ import javax.validation.Valid;
 <span class="fc" id="L70">        return organization;</span>
     }
 
+
     @Operation(summary= &quot;Delete a UCSBOrganizations&quot;)
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
     @DeleteMapping(&quot;&quot;)
     public Object deleteOrganizations(
             @Parameter(name=&quot;orgCode&quot;) @RequestParam String orgCode) {
-<span class="fc" id="L78">        UCSBOrganizations commons = ucsbOrganizationsRepository.findById(orgCode)</span>
-<span class="fc" id="L79">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganizations.class, orgCode));</span>
+<span class="fc" id="L79">        UCSBOrganizations commons = ucsbOrganizationsRepository.findById(orgCode)</span>
+<span class="fc" id="L80">                .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganizations.class, orgCode));</span>
 
-<span class="fc" id="L81">        ucsbOrganizationsRepository.delete(commons);</span>
-<span class="fc" id="L82">        return genericMessage(&quot;UCSBOrganizations with id %s deleted&quot;.formatted(orgCode));</span>
+<span class="fc" id="L82">        ucsbOrganizationsRepository.delete(commons);</span>
+<span class="fc" id="L83">        return genericMessage(&quot;UCSBOrganizations with id %s deleted&quot;.formatted(orgCode));</span>
     }
+
 }
+
+//new stuff. I am not sure if I should have deleted all of it lol 
+
+//I hope yes - I didn't save the last one...
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
