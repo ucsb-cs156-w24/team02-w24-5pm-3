@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @Tag(name = "RecommendationRequest")
@@ -86,22 +88,25 @@ public class RecommendationRequestController extends ApiController {
         return genericMessage("Recommendation request with id %s deleted".formatted(id));
     }
 
-//    @Operation(summary= "Update a single date")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PutMapping("")
-//    public UCSBDate updateUCSBDate(
-//            @Parameter(name="id") @RequestParam Long id,
-//            @RequestBody @Valid UCSBDate incoming) {
-//
-//        UCSBDate ucsbDate = ucsbDateRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException(UCSBDate.class, id));
-//
-//        ucsbDate.setQuarterYYYYQ(incoming.getQuarterYYYYQ());
-//        ucsbDate.setName(incoming.getName());
-//        ucsbDate.setLocalDateTime(incoming.getLocalDateTime());
-//
-//        ucsbDateRepository.save(ucsbDate);
-//
-//        return ucsbDate;
-//    }
+    @Operation(summary= "Update a single recommendation request")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public RecommendationRequest updateRecommendationRequest(
+            @Parameter(name="id") @RequestParam Long id,
+            @RequestBody @Valid RecommendationRequest incoming) {
+
+        RecommendationRequest recommendationRequest = recommendationRequestRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
+
+        recommendationRequest.setProfessorEmail(incoming.getProfessorEmail());
+        recommendationRequest.setRequesterEmail(incoming.getRequesterEmail());
+        recommendationRequest.setExplanation(incoming.getExplanation());
+        recommendationRequest.setDateRequested(incoming.getDateRequested());
+        recommendationRequest.setDateNeeded(incoming.getDateNeeded());
+        recommendationRequest.setDone(incoming.getDone());
+
+        recommendationRequestRepository.save(recommendationRequest);
+
+        return recommendationRequest;
+    }
 }
