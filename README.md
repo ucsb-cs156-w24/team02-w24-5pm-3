@@ -7,6 +7,17 @@ Deployments:
 * Prod: <https://team02.dokku-07.cs.ucsb.edu>
 * QA: <https://team02-qa.dokku-07.cs.ucsb.edu>
 
+```
+| Table                       | Team Member  | Github Id     |
+|-----------------------------|--------------|---------------|
+| `UCSBDiningCommonsMenuItem` | Michael      | bigjr-mkkong  |
+| `UCSBOrganization`          | Yerassyl     | shakcmpsc     |
+| `RecommendationRequest`     | Ben          | bwr02         |
+| `MenuItemReview`            | Sophia       | sophiattran   |
+| `HelpRequest`               | Chloe        | chloeqta      |
+| `Articles`                  | Animesh      | theanimated01 |
+```
+
 # Setup before running application
 
 Before running the application for the first time,
